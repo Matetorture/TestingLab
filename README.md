@@ -43,6 +43,13 @@ Otwórz aplikację już dziś i zacznij dodawać swoje projekty oraz testować a
 </details>
 
 <details>
+<summary><h1>Diagram widoków</h1></summary>
+
+<img src="ViewsDiagram.png">
+
+</details>
+
+<details>
 <summary><h1>Diagram bazy danych</h1></summary>
 
 <img src="essa.png">
