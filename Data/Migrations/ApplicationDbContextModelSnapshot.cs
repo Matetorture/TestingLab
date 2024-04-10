@@ -8,7 +8,7 @@ using TestingLab.Data;
 
 #nullable disable
 
-namespace TestingLab.Data.Migrations
+namespace TestingLab.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -241,23 +241,21 @@ namespace TestingLab.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TestRequestEntities");
                 });
@@ -265,30 +263,20 @@ namespace TestingLab.Data.Migrations
             modelBuilder.Entity("TestingLab.Data.Entities.TestReviewEntity", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("TestRequestEntityId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserEntityId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TestRequestEntityId");
-
-                    b.HasIndex("UserEntityId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TestReviewEntities");
                 });
@@ -301,11 +289,9 @@ namespace TestingLab.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("UserEntity");
@@ -364,26 +350,40 @@ namespace TestingLab.Data.Migrations
 
             modelBuilder.Entity("TestingLab.Data.Entities.TestRequestEntity", b =>
                 {
-                    b.HasOne("TestingLab.Data.Entities.UserEntity", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
+                    b.HasOne("TestingLab.Data.Entities.UserEntity", "UserEntity")
+                        .WithMany("TestRequests")
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("Author");
+                    b.Navigation("UserEntity");
                 });
 
             modelBuilder.Entity("TestingLab.Data.Entities.TestReviewEntity", b =>
                 {
                     b.HasOne("TestingLab.Data.Entities.TestRequestEntity", "TestRequestEntity")
-                        .WithMany()
-                        .HasForeignKey("TestRequestEntityId");
+                        .WithMany("TestReviewEntity")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TestingLab.Data.Entities.UserEntity", "UserEntity")
-                        .WithMany()
-                        .HasForeignKey("UserEntityId");
+                        .WithMany("TestReviews")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("TestRequestEntity");
 
                     b.Navigation("UserEntity");
+                });
+
+            modelBuilder.Entity("TestingLab.Data.Entities.TestRequestEntity", b =>
+                {
+                    b.Navigation("TestReviewEntity");
+                });
+
+            modelBuilder.Entity("TestingLab.Data.Entities.UserEntity", b =>
+                {
+                    b.Navigation("TestRequests");
+
+                    b.Navigation("TestReviews");
                 });
 #pragma warning restore 612, 618
         }
