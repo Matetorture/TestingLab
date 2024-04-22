@@ -233,6 +233,25 @@ namespace TestingLab.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TestingLab.Data.Entities.ActiveTestsEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedToTest")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActiveTestsEntity");
+                });
+
             modelBuilder.Entity("TestingLab.Data.Entities.TestRequestEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -278,7 +297,7 @@ namespace TestingLab.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TestReviewEntities");
+                    b.ToTable("TestReviewEntity");
                 });
 
             modelBuilder.Entity("TestingLab.Data.Entities.UserEntity", b =>
@@ -348,13 +367,32 @@ namespace TestingLab.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TestingLab.Data.Entities.ActiveTestsEntity", b =>
+                {
+                    b.HasOne("TestingLab.Data.Entities.TestRequestEntity", "TestRequest")
+                        .WithMany("ActiveTesters")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestingLab.Data.Entities.UserEntity", "User")
+                        .WithMany("ActiveTests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TestRequest");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TestingLab.Data.Entities.TestRequestEntity", b =>
                 {
-                    b.HasOne("TestingLab.Data.Entities.UserEntity", "UserEntity")
+                    b.HasOne("TestingLab.Data.Entities.UserEntity", "Author")
                         .WithMany("TestRequests")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("UserEntity");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("TestingLab.Data.Entities.TestReviewEntity", b =>
@@ -376,11 +414,15 @@ namespace TestingLab.Migrations
 
             modelBuilder.Entity("TestingLab.Data.Entities.TestRequestEntity", b =>
                 {
+                    b.Navigation("ActiveTesters");
+
                     b.Navigation("TestReviewEntity");
                 });
 
             modelBuilder.Entity("TestingLab.Data.Entities.UserEntity", b =>
                 {
+                    b.Navigation("ActiveTests");
+
                     b.Navigation("TestRequests");
 
                     b.Navigation("TestReviews");
