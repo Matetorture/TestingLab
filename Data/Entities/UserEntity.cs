@@ -9,5 +9,6 @@ public class UserEntity : IdentityUser
     public DateTime CreatedAt { get; set; }
     public ICollection<TestRequestEntity>? TestRequests { get; set; }
     public  ICollection<TestReviewEntity>? TestReviews { get; set;}
+    public ICollection<ActiveTestsEntity>? ActiveTests { get; set; }
 
 }
